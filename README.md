@@ -13,6 +13,22 @@ npm run build    # 产物在 dist/，base: './' 所以 file:// 双击也能开
 
 注意：本机 PowerShell 禁止运行 `npm.ps1`，要用 `npm.cmd`，或者直接 `npm run dev` 从别的终端进。
 
+## 部署
+
+仓库：https://github.com/PatchJudkins/ximoyu（`main` 分支，git push 即同步）
+
+**Cloudflare Pages 直传**：`npm run build` 之后，把 `dist/` 打包成 zip 上传。
+zip 里的路径必须是正斜杠、`index.html` 要在压缩包根目录（不是套一层 `dist/`）：
+
+```powershell
+# 用 Python 打，别用 Compress-Archive（它写反斜杠，图会 404）
+& $python '..\.tmp\probe\zip_dist.py'   # → ximoyu-cloudflare.zip
+```
+
+产物 `ximoyu-cloudflare.zip` 约 13 MB（两个 mp4 占 7.7 MB，其余是 webp）。
+上传 Cloudflare 后，构建输出目录填 `/`（直传模式下其实用不到）。
+
+
 ## 目录
 
 ```
