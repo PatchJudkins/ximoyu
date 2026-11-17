@@ -1,0 +1,477 @@
+/* ------------------------------ 关于页 ------------------------------ */
+/* 这一页是独立入口（about.html），共用 tokens / global / components，
+   只在下面补这一页自己的版式，不碰首页的类。 */
+
+.ab {
+  position: relative;
+  overflow-x: clip;
+}
+
+/* ---------- 首屏 ---------- */
+.ab-hero {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(118px, 17vh, 190px) var(--pad) clamp(36px, 6vh, 80px);
+}
+
+/* 没有第二块 canvas：用几团柔和的光雾接住首屏的流光，省一个 WebGL 上下文 */
+.ab-hero__bg {
+  position: absolute;
+  inset: -18% -8% auto;
+  height: 92%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 46% at 12% 6%, rgba(255, 46, 99, 0.34), transparent 72%),
+    radial-gradient(46% 52% at 82% -4%, rgba(61, 215, 255, 0.26), transparent 72%),
+    radial-gradient(64% 60% at 52% 84%, rgba(125, 91, 255, 0.24), transparent 74%);
+  filter: blur(34px) saturate(1.1);
+  animation: abDrift 26s var(--ease) infinite alternate;
+}
+
+@keyframes abDrift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.08);
+  }
+}
+
+.ab-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+
+.ab-eyebrow i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--magenta);
+  box-shadow: 0 0 12px 2px rgba(255, 46, 99, 0.7);
+  animation: dotPulse 3.2s var(--ease) infinite;
+}
+
+.ab-title {
+  margin: clamp(18px, 2.6vw, 30px) 0 0;
+  font-size: clamp(46px, 9vw, 124px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ab-title__en {
+  margin-top: clamp(14px, 2vw, 22px);
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 1vw, 12.5px);
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  color: var(--paper-faint);
+}
+
+.ab-lede {
+  max-width: 62ch;
+  margin-top: clamp(22px, 3vw, 36px);
+  font-size: clamp(15px, 1.32vw, 18.5px);
+  line-height: 1.92;
+  color: var(--paper-dim);
+}
+
+.ab-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(22px, 4vw, 62px);
+  margin: clamp(30px, 4.4vw, 52px) 0 0;
+  padding-top: clamp(18px, 2.2vw, 26px);
+  border-top: 1px solid var(--line);
+}
+
+.ab-facts dt {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin-bottom: 8px;
+}
+
+.ab-facts dd {
+  font-size: 14px;
+  color: var(--paper);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 图 + 故事 ---------- */
+.ab-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 80px);
+  padding: clamp(28px, 5vh, 60px) var(--pad) clamp(48px, 9vh, 110px);
+}
+
+.ab-figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0a0a12;
+}
+
+.ab-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 1848;
+  object-fit: cover;
+  object-position: 50% 50%;
+  /* 和站点的暗底虹彩对齐：压亮度、提饱和，再用一层渐变做双色调 */
+  filter: grayscale(0.32) contrast(1.08) saturate(1.1) brightness(0.78);
+  transform: scale(1.005);
+  transition:
+    filter 0.9s var(--ease),
+    transform 1.4s var(--ease-out);
+}
+
+.ab-figure::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(155deg, rgba(255, 46, 99, 0.72) 0%, rgba(125, 91, 255, 0.62) 46%, rgba(61, 215, 255, 0.66) 100%),
+    radial-gradient(70% 50% at 50% 100%, rgba(5, 5, 10, 0.86), transparent 70%);
+  mix-blend-mode: color;
+  opacity: 0.62;
+  transition: opacity 0.9s var(--ease);
+}
+
+.ab-figure::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 66%, rgba(5, 5, 10, 0.9) 100%);
+}
+
+.ab-figure:hover img {
+  transform: scale(1.035);
+  filter: grayscale(0.18) contrast(1.1) saturate(1.22) brightness(0.86);
+}
+
+.ab-figure:hover::after {
+  opacity: 0.5;
+}
+
+.ab-figure figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(14px, 1.8vw, 20px);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: rgba(243, 240, 234, 0.72);
+}
+
+.ab-figure__idx {
+  color: var(--paper-faint);
+}
+
+.ab-story {
+  padding-top: clamp(0px, 1vw, 14px);
+}
+
+.ab-h2 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.24;
+}
+
+.ab-story p {
+  margin: clamp(16px, 2vw, 22px) 0 0;
+  max-width: 60ch;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--paper-dim);
+}
+
+.ab-quote {
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 46, 99, 0.5);
+  font-family: var(--font-mono);
+  font-size: 12px !important;
+  line-height: 1.9 !important;
+  color: var(--paper-faint) !important;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 小标题行 ---------- */
+.ab-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 20px);
+  padding-top: clamp(16px, 2vw, 22px);
+  border-top: 1px solid var(--line);
+  margin-bottom: clamp(22px, 3.6vw, 42px);
+}
+
+.ab-sec-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--paper-faint);
+}
+
+.ab-sec-en {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  white-space: nowrap;
+}
+
+/* ---------- 做什么 ---------- */
+.ab-what {
+  padding: 0 var(--pad) clamp(48px, 8vh, 100px);
+}
+
+.ab-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ab-list li {
+  display: grid;
+  grid-template-columns: 54px minmax(160px, 24%) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(12px, 2vw, 28px);
+  padding: clamp(18px, 2.4vw, 28px) clamp(8px, 1vw, 16px);
+  border-bottom: 1px solid var(--line);
+  transition:
+    background 0.45s var(--ease),
+    translate 0.5s var(--ease-out);
+}
+
+.ab-list li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.ab-list li:hover {
+  background: rgba(255, 255, 255, 0.025);
+  translate: 6px 0;
+}
+
+.ab-list__num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--paper-faint);
+  padding-top: 5px;
+}
+
+.ab-list h3 {
+  margin: 0;
+  font-size: clamp(18px, 1.55vw, 22px);
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.ab-list__en {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+
+.ab-list__desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--paper-dim);
+}
+
+/* ---------- 成员 ---------- */
+.ab-team {
+  padding: 0 var(--pad) clamp(56px, 9vh, 120px);
+}
+
+.ab-people {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+/* 用每格自己的右边 / 下边画线，而不是靠容器的背景色透出网格；
+   最后一行不满时，空出来的地方就不会出现一块亮格子 */
+.ab-person {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(16px, 1.8vw, 22px);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(5, 5, 10, 0.86);
+  transition: background 0.45s var(--ease);
+}
+
+.ab-person:hover {
+  background: rgba(20, 20, 32, 0.9);
+}
+
+.ab-person__idx {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--paper-faint);
+}
+
+.ab-person__name {
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ab-person__role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--paper-faint);
+}
+
+.ab-person__role a {
+  color: inherit;
+  transition: color 0.35s var(--ease);
+}
+
+.ab-person__role a:hover {
+  color: var(--paper);
+}
+
+.ab-person--mentor .ab-person__name {
+  color: #ffc46b;
+}
+
+.ab-person--lead .ab-person__role {
+  color: rgba(61, 215, 255, 0.85);
+}
+
+.ab-person--more {
+  opacity: 0.62;
+}
+
+.ab-person--more .ab-person__name {
+  font-weight: 400;
+  color: var(--paper-dim);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .ab-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ab-figure img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .ab-list li {
+    grid-template-columns: 34px minmax(0, 1fr);
+    row-gap: 10px;
+  }
+
+  .ab-list__desc {
+    grid-column: 2 / -1;
+  }
+
+  .ab-sec-en {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-hero__bg {
+    animation: none;
+  }
+}
+
+/* 首屏右侧那颗淡星：填掉空白，又不抢字 */
+.ab-hero__star {
+  position: absolute;
+  top: 46%;
+  right: clamp(18px, 7vw, 150px);
+  width: clamp(120px, 20vw, 300px);
+  height: auto;
+  translate: 0 -50%;
+  opacity: 0.17;
+  pointer-events: none;
+  filter: drop-shadow(0 0 46px rgba(150, 185, 255, 0.55));
+  animation: abStar 18s var(--ease) infinite alternate;
+}
+
+@keyframes abStar {
+  from {
+    opacity: 0.12;
+    rotate: -4deg;
+  }
+  to {
+    opacity: 0.24;
+    rotate: 6deg;
+  }
+}
+
+@media (max-width: 900px) {
+  .ab-hero__star {
+    display: none;
+  }
+}
+
+
+/* 有个人主页的成员，名字下面多一行小链接 */
+.ab-person__site {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid rgba(61, 215, 255, 0.28);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(61, 215, 255, 0.82);
+  text-decoration: none;
+  transition:
+    color 0.35s var(--ease),
+    border-color 0.35s var(--ease);
+}
+
+.ab-person__site:hover {
+  color: #9df0ff;
+  border-bottom-color: rgba(157, 240, 255, 0.7);
+}

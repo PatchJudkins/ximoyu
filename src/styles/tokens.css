@@ -1,0 +1,49 @@
+/* ============================================================
+   Design tokens — 「虹彩薄膜 / 液态金属 / 酸性蒸汽波」
+   ============================================================ */
+:root {
+  /* 底色：近黑，留出暗部让高光刺眼 */
+  --ink-900: #05050a;
+  --ink-800: #08080f;
+  --ink-700: #0c0c14;
+  --ink-600: #12121c;
+
+  /* 文字：偏暖的纸白，不是纯白 */
+  --paper: #f3f0ea;
+  --paper-dim: rgba(243, 240, 234, 0.7);
+  --paper-faint: rgba(243, 240, 234, 0.42);
+  --line: rgba(243, 240, 234, 0.13);
+  --line-strong: rgba(243, 240, 234, 0.24);
+
+  /* 虹彩光谱 */
+  --magenta: #ff2e63;
+  --coral: #ff7a45;
+  --lemon: #ffd93d;
+  --acid: #7dff6b;
+  --cyan: #22e0ff;
+  --indigo: #6b5bff;
+  --violet: #c77dff;
+
+  /* 虹彩渐变（文字 / 描边 / 按钮共用） */
+  --holo: linear-gradient(
+    100deg,
+    var(--magenta) 0%,
+    var(--coral) 14%,
+    var(--lemon) 28%,
+    var(--acid) 44%,
+    var(--cyan) 60%,
+    var(--indigo) 76%,
+    var(--violet) 90%,
+    var(--magenta) 100%
+  );
+
+  /* 字体：全部走系统字体，零网络依赖 */
+  --font-sans: 'Segoe UI Variable Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+    system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Code', 'Consolas', ui-monospace, 'SF Mono', monospace;
+
+  /* 节奏 */
+  --pad: clamp(20px, 5vw, 88px);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
