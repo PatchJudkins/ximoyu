@@ -172,9 +172,13 @@ void main() {
 }
 `
 
-// 像素预算：1440×900 ≈ 1.3M、1920×1080 降采样到 ≈ 1.4M，集显也能稳住 60fps
-const MAX_PIXELS = 1_400_000
-const MAX_DPR = 1.5
+// 像素预算：1440×900 基本原分辨率、1920×1080 降到 ≈1.0M 再由 CSS 放大。
+// 光带本身是软的，放大后肉眼看不出，但片元量少了 30%，集显/省电模式下差别很大。
+const MAX_PIXELS = 1_000_000
+const MAX_DPR = 1.25
+// 30fps 上限：240Hz 屏上原本每秒画 240 次，纯属白烧 GPU 和电
+const FPS_CAP = 30
+const FRAME_MS = 1000 / FPS_CAP - 1.5
 
 export default function AuroraGL({ onFail }) {
   const ref = useRef(null)
@@ -286,15 +290,21 @@ export default function AuroraGL({ onFail }) {
     let raf = 0
     let visible = true
     let last = 0
+    let lastDraw = 0
     const t0 = performance.now() / 1000
 
     const frame = (now) => {
       raf = requestAnimationFrame(frame)
       if (!visible) return
       if (document.hidden) return
+      if (reduce && last) return
+
+      // 限帧：光带是几秒才挪一点的软光，30fps 完全看不出差别，
+      // 但在 240Hz 屏上能把 shader 的绘制量直接砍到 1/8
+      if (last && now - lastDraw < FRAME_MS) return
+      lastDraw = now
 
       const t = now / 1000
-      if (reduce && last) return
       last = 1
 
       cur.x += (target.x - cur.x) * 0.09

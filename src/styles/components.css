@@ -32,9 +32,11 @@
 .nav.is-scrolled {
   padding-top: 13px;
   padding-bottom: 13px;
-  background: rgba(5, 5, 10, 0.72);
+  /* 不用 backdrop-filter：导航正下方就是每帧重绘的 WebGL 画布，
+     blur 会逼着合成器每帧重新取一次背景模糊，这是首屏最常见的掉帧来源。
+     代价是要把底色做厚一点，否则下面的字会透上来 */
+  background: rgba(5, 5, 10, 0.985);
   border-bottom-color: var(--line);
-  backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .nav__mark {
@@ -510,6 +512,8 @@
   background-size: 100% 100%;
   -webkit-mask: var(--logo-mask) left center / contain no-repeat;
   mask: var(--logo-mask) left center / contain no-repeat;
+  /* 提示合成器：hueCycle 动的是 filter，不提升图层的话每帧都要重算样式 */
+  will-change: filter;
   animation: hueCycle 64s steps(96) infinite;
 }
 
@@ -765,7 +769,8 @@
   aspect-ratio: 16 / 8.6;
 }
 
-/* 扫描线：跟着 hover 轻微明暗，成本只有一次重绘 */
+/* 扫描线：静态铺一层就够，漂移只在 hover 时跑
+   （原来 23 张卡每帧各自重绘 background-position，作品页光这一项就吃掉一半主线程） */
 .work__cover::before {
   content: '';
   position: absolute;
@@ -779,6 +784,9 @@
   );
   mix-blend-mode: soft-light;
   opacity: 0.7;
+}
+
+.work:hover .work__cover::before {
   animation: scanDrift 6s linear infinite;
 }
 

@@ -27,7 +27,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* 底噪：几团极暗的彩色辉光，铺满整页 */
+/* 底噪：几团极暗的彩色辉光，铺满整页
+   渐变本身就是软的，不需要再 filter: blur()——那会在一个 1.5 倍视口的定层上
+   做一次 40px 的大半径模糊，纯属白花 GPU 时间（还会多留一个滤镜图层） */
 body::before {
   content: '';
   position: fixed;
@@ -39,7 +41,6 @@ body::before {
     radial-gradient(44% 34% at 86% 12%, rgba(255, 46, 99, 0.07), transparent 68%),
     radial-gradient(54% 44% at 62% 96%, rgba(34, 224, 255, 0.06), transparent 70%),
     radial-gradient(40% 30% at 8% 78%, rgba(125, 255, 107, 0.035), transparent 70%);
-  filter: blur(40px);
 }
 
 #root {
@@ -163,6 +164,7 @@ button {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  will-change: filter;
   animation: hueCycle 64s steps(96) infinite;
 }
 

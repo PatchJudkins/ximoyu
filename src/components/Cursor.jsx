@@ -23,10 +23,25 @@ export default function Cursor() {
     let y = 0
     let shown = false
     let raf = 0
+    let hit = false
+
+    // 磁吸要读 4 个元素的位置，每次 pointermove 都 getBoundingClientRect 会强制排版；
+    // 缓存 120ms 刷一次就够（滚动/缩放时跟着变）
+    let rects = []
+    let measuredAt = 0
+    const measure = (force) => {
+      const now = performance.now()
+      if (!force && now - measuredAt < 120) return
+      measuredAt = now
+      rects = magnets.map((m) => m.getBoundingClientRect())
+    }
 
     const magnetize = (cx, cy) => {
-      for (const m of magnets) {
-        const r = m.getBoundingClientRect()
+      measure(false)
+      for (let i = 0; i < magnets.length; i++) {
+        const m = magnets[i]
+        const r = rects[i]
+        if (!r) continue
         const dx = cx - (r.left + r.width / 2)
         const dy = cy - (r.top + r.height / 2)
         const near = Math.abs(dx) < r.width / 2 + 56 && Math.abs(dy) < r.height / 2 + 48
@@ -49,7 +64,11 @@ export default function Cursor() {
         y = ty
         root.classList.add('cursor-on')
       }
-      el.classList.toggle('is-hit', !!e.target.closest?.(HIT))
+      const next = !!e.target.closest?.(HIT)
+      if (next !== hit) {
+        hit = next
+        el.classList.toggle('is-hit', hit)
+      }
       magnetize(tx, ty)
     }
 
@@ -66,9 +85,14 @@ export default function Cursor() {
 
     const tick = () => {
       // 0.42 跟手但不硬跟，尾巴刚好能看出"被拽着走"
-      x += (tx - x) * 0.42
-      y += (ty - y) * 0.42
-      el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`
+      const nx = x + (tx - x) * 0.42
+      const ny = y + (ty - y) * 0.42
+      // 收敛了就不要再写 style：空转每帧都触发一次样式重算，白白占着主线程
+      if (Math.abs(nx - x) > 0.02 || Math.abs(ny - y) > 0.02) {
+        x = nx
+        y = ny
+        el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`
+      }
       raf = requestAnimationFrame(tick)
     }
 
